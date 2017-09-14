@@ -1,9 +1,11 @@
 #!/bin/bash
 pacmngdl(){
-	sudo apt update
-	sudo apt install nmap
-	sleep 3
-	clear
+	read -p "Do you want to continue? [Y/n] " want
+	if [ "$want" == "Y" ] || [ "$want" == "y" ];then
+		sudo apt update
+		sudo apt namp 
+	else
+		echo "Abort." ; exit
 }
 clear
 echo -e """
