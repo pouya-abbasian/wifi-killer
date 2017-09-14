@@ -6,6 +6,7 @@ pacmngdl(){
 		sudo apt namp 
 	else
 		echo "Abort." ; exit
+	fi
 }
 clear
 echo -e """
