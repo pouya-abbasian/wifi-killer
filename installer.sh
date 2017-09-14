@@ -3,7 +3,7 @@ pacmngdl(){
 	read -p "Do you want to continue? [Y/n] " want
 	if [ "$want" == "Y" ] || [ "$want" == "y" ];then
 		sudo apt update
-		sudo apt install namp 
+		sudo apt install nmap 
 	else
 		echo "Abort." ; exit
 	fi
