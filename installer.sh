@@ -1,52 +1,65 @@
 #!/bin/bash
-pacmngdl(){
-	read -p "Do you want to continue? [Y/n] " want
-	if [ "$want" == "Y" ] || [ "$want" == "y" ];then
-		sudo apt update
-		sudo apt install -y nmap 
-	else
-		echo "Abort." ; exit
-	fi
-}
 clear
-echo -e """
-To run the program, we need to install the listed tools :
-\tnmap
-"""
-id | grep sudo  > /dev/null
-sudo=$?
-chmod +x wifi-killer
-if [ $sudo = "0" ];then
-	pacmngdl
-	checkdl=$?
-	if [ "$checkdl" = "0" ];then
-		echo -e "\t\tall programms are installed successfully!!!"
-		echo "Now the programms should be added without any problem!!"
-		if [ "$sudo" = "0" ];then  #If Its == Ture , You Are Sudo
-			sudo cp wifi-killer /bin
-			sudo chmod +x /bin/wifi-killer
-		else 
-			echo "you need to install 'nmap' which needs root access!!! contact your system admin"
-			echo -e "use this command to install!!!\n\t sudo apt install nmap "
-			PATH=$PATH:$PWD
-			export PATH
-			echo "$PATH" >> ~/.bashrc
-		fi
-		echo "the programm was installed successfully"
-		echo "you can use the 'wifi-killer' command whenever you need to use the programm"
+echo -e """\nTo run the program, we need to install the listed tools :\n\tnmap\n"
+##Check installed NMAP OR Not
+if nmap -v &> /dev/null ;then
+	echo "NMAP Is Installed!"
+	nmap_install="0"
+else
+	echo "You Don't Have nmap, I want To Install That."
+	nmap_install="1"
+fi
+##Install NMAP
+nmap_pacman(){
+	sudo pacman -Syu nmap
+}
+nmap_apt(){
+	sudo apt update
+	sudo apt install nmap
+}
+nmap_yum(){
+	sudo yum install nmap
+}
+nmap_zypper(){
+	sudo zypper install nmap
+}
+#Checking if the distro is Debian Base/ Arch Base/ Redhat Base/ OpenSUSE base and running the correct script
+if [ "$nmap_install" != "0" ] ;then 
+	chmod +x wifi-killer	
+	id | grep sudo  > /dev/null
+	sudo="$?"
+	if [ "$sudo" != "0" ];then
+		echo "you need to install 'nmap' which needs root access!!! contact your system admin"
+		exit 1
+	else	
+	if pacman -Q &> /dev/null ;then
+		nmap_pacman
+	elif apt list --installed &> /dev/null ;then
+		nmap_apt
+	elif dnf list &> /dev/null ;then
+		nmap_yum
+	elif zypper search i+ &> /dev/null ;then
+		nmap_zypper
 	else
-		if [ "$checkdl" = "100" ] ; then
-			echo "Make sure you have a working connection and your your repositories are up to date"
-			exit
-		else
-			echo "Unknow ERROR!!!!"
-			echo "you should first install the programms, then add wifi-killer to your commands and then recall wifi-kiiler"
-		fi
+		echo "Your distro is neither Debian Base nor Arch Base nor Redhat Base nor OpenSUSE Base So, install NMAP On Your Sys and Try again."
+		exit 1
+	fi
+fi
+##Install wifi-killer
+if [ "$sudo" == "0" ];then  #If Its == Ture , You Are Sudo
+	sudo cp -vv wifi-killer /bin
+	if [ "$?" != "0" ];then
+		echo "You have An ERROR in copying file!!!"		
 	fi
 else
-	echo "you are not a sudo user. ask your administrator to install these programms or make you a sudo user!!!"
-	echo "nmap"
+	mkdir -p "~/bin"
+	cp -vv wifi-killer ~/bin/
+	chmod +x ~/bin/wifi-killer
+	PATH="$PATH:/home/$USER/bin"
+	echo "PATH=$PATH:/home/$USER/bin" >> ~/.bashrc
 fi
+echo "the programm was installed successfully"
+echo "you can use the 'wifi-killer' command whenever you need to use the program"
 echo "Have Fun!!!"
 ## Installer Coded By Https://Pouya-abbasian
 ## translation by https://gitlab.com/mhmdreza_abedi
