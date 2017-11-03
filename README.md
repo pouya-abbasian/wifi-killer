@@ -6,7 +6,7 @@
 در اوبونتو و دبین ریشه ها : 
 ```bash
 git clone https://github.com/pouya-abbasian/wifi-killer
-cd wifi-killer ; chmod +x installer.sh 
+cd wifi-killer 
 ./installer.sh
 ```
 موفق باشید!
